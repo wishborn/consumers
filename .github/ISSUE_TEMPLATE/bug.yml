@@ -1,0 +1,45 @@
+name: Bug
+description: Something is broken. Wrong output, a crash, or behaviour that contradicts the docs.
+title: "[BUG] "
+labels: ["type:bug", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **This repo is public.** No credentials, customer data or private URLs. Security issues go to the [security policy](https://github.com/Particle-Academy/.github/blob/main/SECURITY.md), not here.
+  - type: input
+    id: package
+    attributes:
+      label: Package
+      description: Write Unknown if you don't know which one.
+      placeholder: "@particle-academy/react-fancy"
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      placeholder: "6.6.0"
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction
+      description: The smallest code or steps that show it, runnable as written.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected
+      description: What should have happened, and what makes you expect it (a docs link, a type, earlier behaviour).
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual
+      description: What happened, with the exact error text.
+    validations:
+      required: true

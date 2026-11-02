@@ -1,0 +1,75 @@
+# Classifies every report by its title prefix and checks its required headings.
+#
+# Issue titles and bodies are attacker-controlled. They reach this script only
+# through env vars, are only ever compared against fixed strings, and are never
+# evaluated, echoed into a command or copied into a comment. No checkout and no
+# third-party action, so nothing fetched runs here.
+name: Classify report
+
+on:
+  issues:
+    types: [opened, edited]
+
+permissions:
+  issues: write
+
+jobs:
+  classify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Label and check the report
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          NUMBER: ${{ github.event.issue.number }}
+          TITLE: ${{ github.event.issue.title }}
+          BODY: ${{ github.event.issue.body }}
+        run: |
+          set -u
+          case "$TITLE" in
+            "[BUG] "*)      type=bug;      headings="Package|Version|Reproduction|Expected|Actual" ;;
+            "[FRICTION] "*) type=friction; headings="Package or surface|Who hit it|Kind of friction|What you were trying to do|What took you out of flow|What would have kept you in flow" ;;
+            "[FEATURE] "*)  type=feature;  headings="Package|Goal|What you do today|Proposal" ;;
+            *)              type="";       headings="" ;;
+          esac
+
+          problem=""
+          if [ -z "$type" ]; then
+            problem="The title must start with [BUG], [FRICTION] or [FEATURE], followed by a space."
+          else
+            missing=""
+            old_ifs=$IFS; IFS='|'
+            for h in $headings; do
+              printf '%s\n' "$BODY" | tr -d '\r' | grep -qxF "### $h" || missing="$missing
+          - ### $h"
+            done
+            IFS=$old_ifs
+            [ -z "$missing" ] || problem="This [$type] report is missing these headings:$missing"
+          fi
+
+          for t in bug friction feature; do
+            if [ "$t" != "$type" ]; then
+              gh issue edit "$NUMBER" --repo "$REPO" --remove-label "type:$t" >/dev/null 2>&1 || true
+            fi
+          done
+
+          if [ -n "$type" ]; then
+            gh issue edit "$NUMBER" --repo "$REPO" --add-label "type:$type"
+          fi
+
+          if [ -z "$problem" ]; then
+            gh issue edit "$NUMBER" --repo "$REPO" --add-label needs-triage
+            gh issue edit "$NUMBER" --repo "$REPO" --remove-label needs-format >/dev/null 2>&1 || true
+            echo "ok: type=$type"
+            exit 0
+          fi
+
+          gh issue edit "$NUMBER" --repo "$REPO" --remove-label needs-triage >/dev/null 2>&1 || true
+          already=$(gh issue view "$NUMBER" --repo "$REPO" --json labels --jq '[.labels[].name] | index("needs-format") != null')
+          gh issue edit "$NUMBER" --repo "$REPO" --add-label needs-format
+          if [ "$already" != "true" ]; then
+            gh issue comment "$NUMBER" --repo "$REPO" --body "$problem
+
+          Please edit this report to match the format in the [README](https://github.com/$REPO#3-file-it). This check re-runs when you save."
+          fi
+          echo "needs-format: type=${type:-none}"

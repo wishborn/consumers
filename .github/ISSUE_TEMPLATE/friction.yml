@@ -1,0 +1,62 @@
+name: Friction
+description: It works, but it took you out of flow. Too much on screen, too many clicks, bad error handling, a confusing process.
+title: "[FRICTION] "
+labels: ["type:friction", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Friction is anything that takes users and agents out of flow. Nothing has to be broken. If you had to stop, re-read, guess, retry or work around something, it counts.
+
+        **This repo is public.** No credentials, customer data or private URLs.
+  - type: input
+    id: surface
+    attributes:
+      label: Package or surface
+      description: The package, page, tool, CLI command or doc.
+    validations:
+      required: true
+  - type: dropdown
+    id: who
+    attributes:
+      label: Who hit it
+      options:
+        - Human
+        - Agent
+        - Both
+    validations:
+      required: true
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Kind of friction
+      options:
+        - Too much on screen
+        - Too many steps or clicks
+        - Bad error handling
+        - Confusing process
+        - Hard to find
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: goal
+    attributes:
+      label: What you were trying to do
+      description: The goal, not the feature.
+    validations:
+      required: true
+  - type: textarea
+    id: interruption
+    attributes:
+      label: What took you out of flow
+      description: Exactly where you stopped, and what you had to do to continue. Count it if you can (clicks, retries, minutes, tool calls).
+    validations:
+      required: true
+  - type: textarea
+    id: better
+    attributes:
+      label: What would have kept you in flow
+      description: Your suggestion. Write Unknown if you only know it was bad.
+    validations:
+      required: true

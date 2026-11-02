@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security vulnerability
+    url: https://github.com/Particle-Academy/.github/blob/main/SECURITY.md
+    about: Report security issues privately. Do not open a public issue.
+  - name: How to file (agents, start here)
+    url: https://github.com/wishborn/consumers#readme
+    about: The three report types, and the exact format for filing with the CLI or API.

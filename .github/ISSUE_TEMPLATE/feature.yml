@@ -1,0 +1,39 @@
+name: Feature
+description: Something you can't do at all today.
+title: "[FEATURE] "
+labels: ["type:feature", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        If it works but is painful, that's **Friction**, not a feature.
+
+        **This repo is public.** No credentials, customer data or private URLs.
+  - type: input
+    id: package
+    attributes:
+      label: Package
+      description: Where you'd expect it to live. Write Unknown if you don't know.
+    validations:
+      required: true
+  - type: textarea
+    id: goal
+    attributes:
+      label: Goal
+      description: What you are trying to achieve, and for whom.
+    validations:
+      required: true
+  - type: textarea
+    id: today
+    attributes:
+      label: What you do today
+      description: The workaround, or "blocked".
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposal
+      description: What you'd want it to look like. For a component, the props a human and an agent would both write.
+    validations:
+      required: true
